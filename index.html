@@ -168,10 +168,10 @@ const quizQuestions = [
         ]
     },
     {
-        q: "Hvem er min yndlingsperson?",
+        q: "Hvad holder jeg mest af?",
         answers: [
             { text: "Dig ❤️", correct: true },
-            { text: "Min Playstation 🎮", correct: false }
+            { text: "Min PC og guilden 🎮", correct: false }
         ]
     }
 ];
@@ -182,7 +182,7 @@ function showQuiz() {
 
 function quizAnswer(correct) {
     if (!correct) {
-        alert("Hmm… prøv igen 😘");
+        alert("Hmm… Næsten rigtigt, men prøv igen 😘");
         return;
     }
 
