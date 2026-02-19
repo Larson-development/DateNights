@@ -10,6 +10,7 @@
         color: #333;
         text-align: center;
         padding: 40px;
+        overflow-x: hidden;
     }
     .container {
         background: white;
@@ -18,6 +19,7 @@
         max-width: 500px;
         margin: auto;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        position: relative;
     }
     .date-options button {
         background: #ff6b81;
@@ -45,19 +47,43 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Flyvende hjerter */
+    .heart {
+        position: absolute;
+        font-size: 24px;
+        animation: floatUp 3s linear forwards;
+        pointer-events: none;
+    }
+    @keyframes floatUp {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(-150px); opacity: 0; }
+    }
+
+    /* Nej-knap der flygter */
+    #noBtn {
+        position: relative;
+        background: #aaa;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        margin-left: 10px;
+    }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Vil du hygge med mig på sofaen? ❤️</h1>
+    <h1>Vil du med på en hyggelig date? ❤️</h1>
 
-    <p>Vælg hvilken dag du helst vil forkæles</p>
+    <p>Vælg hvilken dag du helst vil på date</p>
 
     <div class="date-options">
-        <button onclick="chooseDate('2026-02-21', 'En lækker lørdag fyldt med leg ✨')">🌙 21. februar</button>
-        <button onclick="chooseDate('2026-02-22', 'En søndag fyldt med kærlighed 💕')">✨ 22. februar</button>
-        <button onclick="chooseDate('2026-02-23', 'En mandag med ekstra hygge 🌸')">💖 23. februar</button>
+        <button onclick="chooseDate('2026-03-01', 'En perfekt start på måneden ✨')">🌙 1. marts</button>
+        <button onclick="chooseDate('2026-03-02', 'En mandag fyldt med kærlighed 💕')">✨ 2. marts</button>
+        <button onclick="chooseDate('2026-03-08', 'En søndag med ekstra hygge 🌸')">💖 8. marts</button>
     </div>
 
     <p id="chosenMessage" class="fade-in"></p>
@@ -67,27 +93,51 @@
         <button onclick="showQuiz()">Fortæl mig hemmeligheden</button>
     </div>
 
+    <!-- Quiz med flere spørgsmål -->
     <div id="quiz" class="fade-in">
-        <p>Mini‑quiz: Hvad glæder jeg mig mest til?</p>
-        <button onclick="quizAnswer(true)">At være sammen med dig ❤️</button>
-        <button onclick="quizAnswer(false)">At spise snacks 😅</button>
+        <p id="quizQuestion">Mini‑quiz: Hvad glæder jeg mig mest til?</p>
+
+        <div id="quizButtons">
+            <button onclick="quizAnswer(true)">At være sammen med dig ❤️</button>
+            <button onclick="quizAnswer(false)">At spise snacks 😅</button>
+        </div>
     </div>
 
     <div id="finalStep" class="fade-in">
         <p>Du havde ret… jeg glæder mig mest til dig ❤️</p>
-        <p>Vælg tidspunkt for vores date</p>
-        <input id="time" type="time"><br><br>
 
-        <p>Indtast din mailadresse</p>
-        <input id="email" type="email" placeholder="Din mailadresse"><br><br>
+        <p>Vil du gerne fortsætte?</p>
+        <button onclick="yesContinue()">Ja ❤️</button>
+        <button id="noBtn" onmouseover="escapeButton()">Nej 😢</button>
 
-        <button onclick="generateICS()">Få kalenderinvitation</button>
+        <div id="timeAndMail" style="display:none; margin-top:20px;">
+            <p>Vælg tidspunkt for vores date</p>
+            <input id="time" type="time"><br><br>
+
+            <p>Indtast din mailadresse</p>
+            <input id="email" type="email" placeholder="Din mailadresse"><br><br>
+
+            <button onclick="generateICS()">Få kalenderinvitation</button>
+        </div>
     </div>
 
     <input id="chosenDate" type="hidden">
 </div>
 
 <script>
+/* Flyvende hjerter */
+function spawnHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤️";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.top = "400px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 3000);
+}
+
+/* Dato valgt */
 function chooseDate(date, message) {
     document.getElementById("chosenDate").value = date;
 
@@ -96,7 +146,35 @@ function chooseDate(date, message) {
     msg.classList.add("fade-in");
 
     document.getElementById("secretMessage").style.display = "block";
+
+    spawnHeart();
 }
+
+/* Quiz */
+let quizStep = 0;
+const quizQuestions = [
+    {
+        q: "Mini‑quiz: Hvad glæder jeg mig mest til?",
+        answers: [
+            { text: "At være sammen med dig ❤️", correct: true },
+            { text: "At spise snacks 😅", correct: false }
+        ]
+    },
+    {
+        q: "Hvad er det bedste ved dig?",
+        answers: [
+            { text: "Dit smil 😍", correct: true },
+            { text: "At du ikke kan fange mig i UNO 😏", correct: false }
+        ]
+    },
+    {
+        q: "Hvem er min yndlingsperson?",
+        answers: [
+            { text: "Dig ❤️", correct: true },
+            { text: "Min Playstation 🎮", correct: false }
+        ]
+    }
+];
 
 function showQuiz() {
     document.getElementById("quiz").style.display = "block";
@@ -104,12 +182,48 @@ function showQuiz() {
 
 function quizAnswer(correct) {
     if (!correct) {
-        alert("Snacks er gode… men ikke så gode som dig 😘");
+        alert("Hmm… prøv igen 😘");
         return;
     }
-    document.getElementById("finalStep").style.display = "block";
+
+    quizStep++;
+
+    if (quizStep >= quizQuestions.length) {
+        document.getElementById("finalStep").style.display = "block";
+        return;
+    }
+
+    const q = quizQuestions[quizStep];
+    document.getElementById("quizQuestion").textContent = q.q;
+
+    const btns = document.getElementById("quizButtons");
+    btns.innerHTML = "";
+
+    q.answers.forEach(a => {
+        const b = document.createElement("button");
+        b.textContent = a.text;
+        b.onclick = () => quizAnswer(a.correct);
+        btns.appendChild(b);
+    });
+
+    spawnHeart();
 }
 
+/* Nej-knap der flygter */
+function escapeButton() {
+    const btn = document.getElementById("noBtn");
+    btn.style.position = "absolute";
+    btn.style.left = Math.random() * 300 + "px";
+    btn.style.top = Math.random() * 200 + "px";
+}
+
+/* Ja-knap */
+function yesContinue() {
+    document.getElementById("timeAndMail").style.display = "block";
+    spawnHeart();
+}
+
+/* ICS-fil */
 function generateICS() {
     const email = document.getElementById("email").value;
     const date = document.getElementById("chosenDate").value;
