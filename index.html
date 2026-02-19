@@ -13,10 +13,9 @@
         text-align: center;
         padding: 20px;
         overflow-x: hidden;
-        cursor: none; /* skjul musen på desktop */
+        cursor: none;
     }
 
-    /* Mobil: vis cursor */
     @media (max-width: 768px) {
         body {
             cursor: default;
@@ -85,35 +84,53 @@
         position: relative;
     }
 
-    .date-options button {
+    /* Fælles knap-stil */
+    button {
         background: #ff6b81;
         color: white;
         border: none;
-        padding: 14px 20px;
-        margin: 10px;
-        border-radius: 10px;
-        font-size: 18px;
+        padding: 16px 22px;
+        margin: 10px auto;
+        border-radius: 14px;
+        font-size: 20px;
+        font-weight: bold;
         cursor: pointer;
-        transition: 0.2s;
         width: 90%;
-        max-width: 300px;
+        max-width: 320px;
+        display: block;
+        transition: 0.15s ease;
+        box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
     }
-    .date-options button:hover {
+
+    button:hover {
         background: #ff4d68;
         transform: scale(1.05);
     }
 
-    #secretMessage, #quiz, #finalStep {
-        display: none;
-        margin-top: 20px;
+    button:active {
+        transform: scale(0.96);
+        background: #ff3b5c;
     }
 
-    .fade-in {
-        animation: fadeIn 0.6s ease forwards;
+    /* Quiz-knapper */
+    #quizButtons button {
+        background: #ff8fa3;
     }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+
+    /* Nej-knap */
+    #noBtn {
+        background: #999;
+        width: auto;
+        display: inline-block;
+        padding: 16px 22px;
+        font-size: 20px;
+    }
+
+    @media (max-width: 768px) {
+        button, #noBtn {
+            font-size: 22px;
+            padding: 18px 24px;
+        }
     }
 
     /* Flyvende emojis */
@@ -127,25 +144,17 @@
         to { transform: translateY(-200px); opacity: 0; }
     }
 
-    /* Nej-knap der flygter */
-    #noBtn {
-        position: relative;
-        background: #aaa;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        margin-left: 10px;
-        font-size: 18px;
+    #secretMessage, #quiz, #finalStep {
+        display: none;
+        margin-top: 20px;
     }
 
-    /* Mobil: større knapper */
-    @media (max-width: 768px) {
-        #noBtn, #finalStep button, .date-options button {
-            font-size: 20px;
-            padding: 16px;
-        }
+    .fade-in {
+        animation: fadeIn 0.6s ease forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 </head>
@@ -166,7 +175,7 @@
     <p>Vælg hvilken dag du helst vil på date</p>
 
     <div class="date-options">
-        <button onclick="chooseDate('2026-02-21', 'En perfekt lørdag aften fyldt med leg og sansespil✨')">🌙 21. februar</button>
+        <button onclick="chooseDate('2026-02-21', 'En perfekt lørdag aften fyldt med leg og sansespil ✨')">🌙 21. februar</button>
         <button onclick="chooseDate('2026-02-22', 'En søndag fyldt med cuddles og film 💕')">✨ 22. februar</button>
         <button onclick="chooseDate('2026-02-23', 'En mandag med ekstra hygge 🌸')">💖 23. februar</button>
     </div>
@@ -174,7 +183,7 @@
     <p id="chosenMessage" class="fade-in"></p>
 
     <div id="secretMessage" class="fade-in">
-        <p>Inden du skriver dig op til hygge har jeg lille quiz til dig… 💌</p>
+        <p>Inden du skriver dig op til hygger har jeg lille quiz til dig… 💌</p>
         <button onclick="showQuiz()">Okay, jeg er klar 😘</button>
     </div>
 
@@ -283,7 +292,7 @@ const quizQuestions = [
         q: "Hvad er det bedste ved dig?",
         answers: [
             { text: "Dit smil 😍", correct: true },
-            { text: "Dine boobs/butt😏", correct: false }
+            { text: "Dine boobs/butt 😏", correct: false }
         ]
     },
     {
