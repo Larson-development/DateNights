@@ -48,16 +48,15 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Flyvende hjerter */
-    .heart {
+    /* Flyvende emojis */
+    .floatEmoji {
         position: absolute;
-        font-size: 24px;
         animation: floatUp 3s linear forwards;
         pointer-events: none;
     }
     @keyframes floatUp {
         from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(-150px); opacity: 0; }
+        to { transform: translateY(-200px); opacity: 0; }
     }
 
     /* Nej-knap der flygter */
@@ -90,10 +89,10 @@
 
     <div id="secretMessage" class="fade-in">
         <p>Inden du skriver dig op til hygger har jeg lille quiz til dig… 💌</p>
-        <button onclick="showQuiz()">Fortæl mig hemmeligheden</button>
+        <button onclick="showQuiz()">Okay, jeg er klar 😘</button>
     </div>
 
-    <!-- Quiz med flere spørgsmål -->
+    <!-- Quiz -->
     <div id="quiz" class="fade-in">
         <p id="quizQuestion">Mini‑quiz: Hvad glæder jeg mig mest til?</p>
 
@@ -104,7 +103,7 @@
     </div>
 
     <div id="finalStep" class="fade-in">
-        <p>Du havde ret… jeg glæder mig mest til dig ❤️</p>
+        <p id="finalMessage">Du havde ret… jeg glæder mig mest til dig ❤️</p>
 
         <p>Vil du gerne fortsætte?</p>
         <button onclick="yesContinue()">Ja ❤️</button>
@@ -125,16 +124,20 @@
 </div>
 
 <script>
-/* Flyvende hjerter */
-function spawnHeart() {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.textContent = "❤️";
-    heart.style.left = Math.random() * window.innerWidth + "px";
-    heart.style.top = "400px";
-    document.body.appendChild(heart);
+/* Flere flyvende emojis */
+const emojiList = ["❤️", "💖", "✨", "💘", "🌸", "💞", "💫"];
 
-    setTimeout(() => heart.remove(), 3000);
+function spawnEmoji() {
+    const emoji = document.createElement("div");
+    emoji.className = "floatEmoji";
+    emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+
+    emoji.style.left = Math.random() * window.innerWidth + "px";
+    emoji.style.top = "450px";
+    emoji.style.fontSize = (20 + Math.random() * 20) + "px";
+
+    document.body.appendChild(emoji);
+    setTimeout(() => emoji.remove(), 3000);
 }
 
 /* Dato valgt */
@@ -147,7 +150,7 @@ function chooseDate(date, message) {
 
     document.getElementById("secretMessage").style.display = "block";
 
-    spawnHeart();
+    spawnEmoji();
 }
 
 /* Quiz */
@@ -173,6 +176,13 @@ const quizQuestions = [
             { text: "Dig ❤️", correct: true },
             { text: "Min PC og guilden 🎮", correct: false }
         ]
+    },
+    {
+        q: "Hvem er min yndlingsperson?",
+        answers: [
+            { text: "Dig 😘", correct: true },
+            { text: "Min kaffekop ☕", correct: false }
+        ]
     }
 ];
 
@@ -182,13 +192,17 @@ function showQuiz() {
 
 function quizAnswer(correct) {
     if (!correct) {
-        alert("Hmm… Næsten rigtigt, men prøv igen 😘");
+        alert("Hmm… Næsten rigtigt, prøv igen 😘");
         return;
     }
+
+    spawnEmoji();
 
     quizStep++;
 
     if (quizStep >= quizQuestions.length) {
+        document.getElementById("finalMessage").textContent =
+            "Du klarede quizzen! Jeg vidste du kunne 😍";
         document.getElementById("finalStep").style.display = "block";
         return;
     }
@@ -205,22 +219,20 @@ function quizAnswer(correct) {
         b.onclick = () => quizAnswer(a.correct);
         btns.appendChild(b);
     });
-
-    spawnHeart();
 }
 
 /* Nej-knap der flygter */
 function escapeButton() {
     const btn = document.getElementById("noBtn");
     btn.style.position = "absolute";
-    btn.style.left = Math.random() * 300 + "px";
-    btn.style.top = Math.random() * 200 + "px";
+    btn.style.left = Math.random() * 350 + "px";
+    btn.style.top = Math.random() * 250 + "px";
 }
 
 /* Ja-knap */
 function yesContinue() {
     document.getElementById("timeAndMail").style.display = "block";
-    spawnHeart();
+    spawnEmoji();
 }
 
 /* ICS-fil */
