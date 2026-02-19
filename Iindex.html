@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>En lille invitation ❤️</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff5f7;
+            color: #333;
+            text-align: center;
+            padding: 40px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #ff6b81;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #ff4d68;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Vil du med på en hyggelig date? ❤️</h1>
+    <p>Indtast din mailadresse og få en kalenderinvitation.</p>
+
+    <input id="email" type="email" placeholder="Din mailadresse">
+    <br>
+    <button onclick="generateICS()">Få invitation</button>
+</div>
+
+<script>
+function generateICS() {
+    const email = document.getElementById("email").value;
+
+    if (!email) {
+        alert("Skriv din mailadresse først ❤️");
+        return;
+    }
+
+    // Tilpas dato, tid og beskrivelse her
+    const title = "Hyggelig dateaften";
+    const description = "En romantisk aften kun for os to ❤️";
+    const location = "Hjemme hos os";
+    const start = "20260301T180000"; // 1. marts 2026 kl. 18:00
+    const end = "20260301T220000";
+
+    const icsContent =
+`BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+DTSTART:${start}
+DTEND:${end}
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "date_invitation.ics";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
