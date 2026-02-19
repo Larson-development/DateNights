@@ -1,72 +1,142 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-    <meta charset="UTF-8">
-    <title>En lille invitation ❤️</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fff5f7;
-            color: #333;
-            text-align: center;
-            padding: 40px;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 450px;
-            margin: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        input {
-            padding: 10px;
-            width: 80%;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #ff6b81;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #ff4d68;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>En lille invitation ❤️</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #fff5f7;
+        color: #333;
+        text-align: center;
+        padding: 40px;
+    }
+    .container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 500px;
+        margin: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .date-options button {
+        background: #ff6b81;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        margin: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .date-options button:hover {
+        background: #ff4d68;
+        transform: scale(1.08);
+    }
+    #secretMessage, #quiz, #finalStep {
+        display: none;
+        margin-top: 20px;
+    }
+    .fade-in {
+        animation: fadeIn 0.6s ease forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 </head>
 <body>
 
 <div class="container">
     <h1>Vil du med på en hyggelig date? ❤️</h1>
-    <p>Indtast din mailadresse og få en kalenderinvitation.</p>
 
-    <input id="email" type="email" placeholder="Din mailadresse">
-    <br>
-    <button onclick="generateICS()">Få invitation</button>
+    <p>Vælg hvilken dag du helst vil på date</p>
+
+    <div class="date-options">
+        <button onclick="chooseDate('2026-03-01', 'En perfekt start på måneden ✨')">🌙 1. marts</button>
+        <button onclick="chooseDate('2026-03-02', 'En mandag fyldt med kærlighed 💕')">✨ 2. marts</button>
+        <button onclick="chooseDate('2026-03-08', 'En søndag med ekstra hygge 🌸')">💖 8. marts</button>
+    </div>
+
+    <p id="chosenMessage" class="fade-in"></p>
+
+    <div id="secretMessage" class="fade-in">
+        <p>Jeg har en lille hemmelighed… 💌</p>
+        <button onclick="showQuiz()">Fortæl mig hemmeligheden</button>
+    </div>
+
+    <div id="quiz" class="fade-in">
+        <p>Mini‑quiz: Hvad glæder jeg mig mest til?</p>
+        <button onclick="quizAnswer(true)">At være sammen med dig ❤️</button>
+        <button onclick="quizAnswer(false)">At spise snacks 😅</button>
+    </div>
+
+    <div id="finalStep" class="fade-in">
+        <p>Du havde ret… jeg glæder mig mest til dig ❤️</p>
+        <p>Vælg tidspunkt for vores date</p>
+        <input id="time" type="time"><br><br>
+
+        <p>Indtast din mailadresse</p>
+        <input id="email" type="email" placeholder="Din mailadresse"><br><br>
+
+        <button onclick="generateICS()">Få kalenderinvitation</button>
+    </div>
+
+    <input id="chosenDate" type="hidden">
 </div>
 
 <script>
+function chooseDate(date, message) {
+    document.getElementById("chosenDate").value = date;
+
+    const msg = document.getElementById("chosenMessage");
+    msg.textContent = message;
+    msg.classList.add("fade-in");
+
+    document.getElementById("secretMessage").style.display = "block";
+}
+
+function showQuiz() {
+    document.getElementById("quiz").style.display = "block";
+}
+
+function quizAnswer(correct) {
+    if (!correct) {
+        alert("Snacks er gode… men ikke så gode som dig 😘");
+        return;
+    }
+    document.getElementById("finalStep").style.display = "block";
+}
+
 function generateICS() {
     const email = document.getElementById("email").value;
+    const date = document.getElementById("chosenDate").value;
+    const time = document.getElementById("time").value;
 
     if (!email) {
         alert("Skriv din mailadresse først ❤️");
         return;
     }
+    if (!date) {
+        alert("Vælg en dato først ❤️");
+        return;
+    }
+    if (!time) {
+        alert("Vælg et tidspunkt ❤️");
+        return;
+    }
 
-    // Tilpas dato, tid og beskrivelse her
+    const start = date.replace(/-/g, "") + "T" + time.replace(":", "") + "00";
+
+    const [hour, minute] = time.split(":");
+    const endHour = String(Number(hour) + 3).padStart(2, "0");
+    const end = date.replace(/-/g, "") + "T" + endHour + minute + "00";
+
     const title = "Hyggelig dateaften";
     const description = "En romantisk aften kun for os to ❤️";
     const location = "Hjemme hos os";
-    const start = "20260301T180000"; // 1. marts 2026 kl. 18:00
-    const end = "20260301T220000";
 
     const icsContent =
 `BEGIN:VCALENDAR
