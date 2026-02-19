@@ -11,7 +11,59 @@
         text-align: center;
         padding: 40px;
         overflow-x: hidden;
+        cursor: none; /* skjul musen for glitter trail */
     }
+
+    /* Intro overlay */
+    #introOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff5f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        color: #ff6b81;
+        z-index: 9999;
+        animation: introFade 2.5s ease forwards;
+    }
+    @keyframes introFade {
+        0% { opacity: 1; }
+        80% { opacity: 1; }
+        100% { opacity: 0; visibility: hidden; }
+    }
+
+    /* Loading hearts */
+    #loadingHearts {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+        display: none;
+        z-index: 99999;
+        animation: pulse 0.6s infinite alternate;
+    }
+    @keyframes pulse {
+        from { transform: translate(-50%, -50%) scale(1); }
+        to { transform: translate(-50%, -50%) scale(1.3); }
+    }
+
+    /* Glitter trail */
+    .trail {
+        position: fixed;
+        pointer-events: none;
+        animation: fadeOut 0.8s forwards;
+        font-size: 18px;
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.4); }
+    }
+
     .container {
         background: white;
         padding: 30px;
@@ -21,6 +73,7 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         position: relative;
     }
+
     .date-options button {
         background: #ff6b81;
         color: white;
@@ -36,10 +89,12 @@
         background: #ff4d68;
         transform: scale(1.08);
     }
+
     #secretMessage, #quiz, #finalStep {
         display: none;
         margin-top: 20px;
     }
+
     .fade-in {
         animation: fadeIn 0.6s ease forwards;
     }
@@ -73,6 +128,15 @@
 </style>
 </head>
 <body>
+
+<!-- INTRO -->
+<div id="introOverlay">❤️ Velkommen, min skat ❤️</div>
+
+<!-- LOADING HEARTS -->
+<div id="loadingHearts">💖💗💞</div>
+
+<!-- GLITTER TRAIL -->
+<div id="trailContainer"></div>
 
 <div class="container">
     <h1>Vil du med på en hyggelig date? ❤️</h1>
@@ -124,7 +188,20 @@
 </div>
 
 <script>
-/* Flere flyvende emojis */
+/* INTRO HEARTS */
+window.onload = () => {
+    let introInterval = setInterval(spawnEmoji, 300);
+    setTimeout(() => clearInterval(introInterval), 2000);
+};
+
+/* LOADING HEARTS */
+function showLoading() {
+    const loader = document.getElementById("loadingHearts");
+    loader.style.display = "block";
+    setTimeout(() => loader.style.display = "none", 1200);
+}
+
+/* FLYVENDE EMOJIS */
 const emojiList = ["❤️", "💖", "✨", "💘", "🌸", "💞", "💫"];
 
 function spawnEmoji() {
@@ -140,20 +217,31 @@ function spawnEmoji() {
     setTimeout(() => emoji.remove(), 3000);
 }
 
-/* Dato valgt */
+/* GLITTER TRAIL */
+document.addEventListener("mousemove", e => {
+    const sparkle = document.createElement("div");
+    sparkle.className = "trail";
+    sparkle.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+    sparkle.style.left = e.pageX + "px";
+    sparkle.style.top = e.pageY + "px";
+    sparkle.style.fontSize = (10 + Math.random() * 15) + "px";
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 800);
+});
+
+/* DATO VALGT */
 function chooseDate(date, message) {
+    showLoading();
     document.getElementById("chosenDate").value = date;
 
     const msg = document.getElementById("chosenMessage");
     msg.textContent = message;
-    msg.classList.add("fade-in");
 
     document.getElementById("secretMessage").style.display = "block";
-
     spawnEmoji();
 }
 
-/* Quiz */
+/* QUIZ */
 let quizStep = 0;
 const quizQuestions = [
     {
@@ -187,17 +275,19 @@ const quizQuestions = [
 ];
 
 function showQuiz() {
+    showLoading();
     document.getElementById("quiz").style.display = "block";
 }
 
 function quizAnswer(correct) {
+    showLoading();
+
     if (!correct) {
         alert("Hmm… Næsten rigtigt, prøv igen 😘");
         return;
     }
 
     spawnEmoji();
-
     quizStep++;
 
     if (quizStep >= quizQuestions.length) {
@@ -221,7 +311,7 @@ function quizAnswer(correct) {
     });
 }
 
-/* Nej-knap der flygter */
+/* NEJ-KNAP */
 function escapeButton() {
     const btn = document.getElementById("noBtn");
     btn.style.position = "absolute";
@@ -229,14 +319,17 @@ function escapeButton() {
     btn.style.top = Math.random() * 250 + "px";
 }
 
-/* Ja-knap */
+/* JA-KNAP */
 function yesContinue() {
+    showLoading();
     document.getElementById("timeAndMail").style.display = "block";
     spawnEmoji();
 }
 
-/* ICS-fil */
+/* ICS-FIL */
 function generateICS() {
+    showLoading();
+
     const email = document.getElementById("email").value;
     const date = document.getElementById("chosenDate").value;
     const time = document.getElementById("time").value;
